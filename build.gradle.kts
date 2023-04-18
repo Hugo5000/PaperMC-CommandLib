@@ -1,11 +1,12 @@
 plugins {
     id("java")
     id("idea")
+    id("signing")
     id("maven-publish")
 }
 
-val githubUsername: String by project
-val githubToken: String by project
+val ossrhUsername: String by project
+val ossrhPassword: String by project
 
 val version: String by project
 val group: String by project
@@ -25,8 +26,8 @@ dependencies {
     // paper api
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     // command stuff
-    compileOnly("cloud.commandframework:cloud-paper:1.8.0")
-    compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.0")
+    compileOnly("cloud.commandframework:cloud-paper:1.8.3")
+    compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.3")
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -74,22 +75,48 @@ tasks {
 }
 publishing {
     publications {
-        create<MavenPublication>("maven") {
-            groupId = group
-            artifactId = artifact
-            version = version
-
+        create<MavenPublication>("mavenJava") {
+            pom {
+                name.set("CommandLib")
+                groupId = group
+                artifactId = artifact
+                version = version
+                description.set("A simple Command library for PaperMC")
+                url.set("https://github.com/Hugo5000/PaperMC-CommandLib")
+                licenses {
+                    license {
+                        name.set("GNU General Public License version 3")
+                        url.set("https://opensource.org/license/gpl-3-0/")
+                    }
+                }
+                developers {
+                    developer {
+                        name.set("Hugo")
+                        email.set("noreply@hugob.at")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/Hugo5000/PaperMC-CommandLib.git")
+                    developerConnection.set("scm:git:ssh://github.com/Hugo5000/PaperMC-CommandLib.git")
+                    url.set("http://github.com/Hugo5000/PaperMC-CommandLib/tree/master")
+                }
+            }
             from(components["java"])
         }
     }
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Hugo5000/PaperMC-CommandLib")
+            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
+            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
             credentials {
-                username = githubUsername
-                password = githubToken
+                username = ossrhUsername
+                password = ossrhPassword
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
 }

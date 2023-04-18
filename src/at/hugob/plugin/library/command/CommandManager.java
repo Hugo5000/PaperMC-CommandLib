@@ -1,4 +1,4 @@
-package at.hugo.plugin.library.command;
+package at.hugob.plugin.library.command;
 
 import cloud.commandframework.Command;
 import cloud.commandframework.CommandTree;
