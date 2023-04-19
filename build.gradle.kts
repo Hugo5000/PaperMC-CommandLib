@@ -3,6 +3,7 @@ plugins {
     id("idea")
     id("signing")
     id("maven-publish")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val ossrhUsername: String by project
@@ -26,8 +27,8 @@ dependencies {
     // paper api
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     // command stuff
-    compileOnly("cloud.commandframework:cloud-paper:1.8.3")
-    compileOnly("cloud.commandframework:cloud-minecraft-extras:1.8.3")
+    implementation("cloud.commandframework:cloud-paper:1.8.3")
+    implementation("cloud.commandframework:cloud-minecraft-extras:1.8.3")
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -66,12 +67,18 @@ tasks.register<Copy>("prepareServer") {
 }
 
 tasks {
+    shadowJar {
+        archiveClassifier.set("")
+    }
     compileJava {
         options.compilerArgs.add("-parameters")
         options.encoding = "UTF-8"
     }
     compileTestJava { options.encoding = "UTF-8" }
     javadoc { options.encoding = "UTF-8" }
+    build {
+        dependsOn(shadowJar)
+    }
 }
 publishing {
     publications {
@@ -108,7 +115,7 @@ publishing {
         maven {
             val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2")
             val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
-            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+            url = if (version.endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
             credentials {
                 username = ossrhUsername
                 password = ossrhPassword
