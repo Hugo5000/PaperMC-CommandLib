@@ -25,14 +25,18 @@ repositories {
 dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
     // paper api
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     // command stuff
-    implementation("cloud.commandframework:cloud-paper:1.8.3")
-    implementation("cloud.commandframework:cloud-minecraft-extras:1.8.3")
+    implementation("org.incendo:cloud-paper:2.0.0-beta.10")
+    implementation("org.incendo:cloud-minecraft-extras:2.0.0-beta.10")
+    implementation("org.incendo:cloud-processors-confirmation:1.0.0-rc.1")
+    // Confirmation Cache
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 }
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    java.targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
     withSourcesJar()
     withJavadocJar()
 }
