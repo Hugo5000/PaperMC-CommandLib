@@ -22,7 +22,7 @@ dependencies {
 
 publish {
     developer {
-        name = "Hugo"
-        email = "noreply@hugob.at"
+        name.set("Hugo")
+        email.set("Hugo")
     }
 }
