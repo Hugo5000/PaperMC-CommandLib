@@ -19,3 +19,10 @@ dependencies {
     // Confirmation Cache
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 }
+
+publish {
+    developer {
+        name = "Hugo"
+        email = "noreply@hugob.at"
+    }
+}
